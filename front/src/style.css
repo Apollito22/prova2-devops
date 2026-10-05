@@ -1,0 +1,23 @@
+body {
+  margin: 20px;
+}
+table {
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+th, td {
+  padding: 5px;
+}
+h1, th {
+  color: #444;
+}
+caption {
+  text-align: left;
+  margin-bottom: 5px;
+}
+.table-container {
+  overflow-x: auto;
+}
+.error {
+  color: red;
+}
