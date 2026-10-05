@@ -1,0 +1,70 @@
+name: prova2-devops
+
+services:
+  banco:
+    image: postgres:16-alpine
+    env_file:
+      - ../.env.example
+      - path: ../.env
+        required: false
+    ports:
+      - "127.0.0.1:${DB_EXTERNAL_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - rede_banco
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+  api:
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    env_file:
+      - ../.env.example
+      - path: ../.env
+        required: false
+    ports:
+      - "127.0.0.1:${API_PORT:-3006}:3000"
+    depends_on:
+      banco:
+        condition: service_healthy
+    networks:
+      - rede_banco
+      - rede_front
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+      start_period: 10s
+    restart: unless-stopped
+  front:
+    build:
+      context: ../front
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:${FRONT_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - rede_front
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+      start_period: 5s
+    restart: unless-stopped
+volumes:
+  postgres_data:
+networks:
+  rede_banco:
+    driver: bridge
+  rede_front:
+    driver: bridge
