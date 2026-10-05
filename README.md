@@ -1,5 +1,4 @@
 ## Sumário
-
 - Requisitos
 - Estrutura
 - Como executar
@@ -9,14 +8,12 @@
 - Como encerrar
 
 ## Requisitos
-
 - Git.
 - Docker funcionando e Docker Compose 2.24 ou superior.
 - Internet na primeira construção para baixar imagens e dependências.
 - Portas 8080, 3006 e 5433 disponíveis.
 
 ## Estrutura
-
 ```text
 api/ -API NestJS, DTOs e Dockerfile
 front/ -Front React, proxy Nginx e Dockerfile
@@ -27,7 +24,6 @@ compose.yaml -Permite executar o Compose pela raiz
 ```
 
 ## Como executar
-
 Clone e execute pelo terminal:
 ```bash
 git clone https://github.com/Apollito22/prova2-devops.git
@@ -51,14 +47,12 @@ Endereços:
 - Status da API e do banco: http://localhost:3006/health
 - PostgreSQL: `localhost:5433`
 
-O banco começa com três turmas de exemplo. O front lista o GET em uma tabela. Teste o CRUD no Swagger e clique em **Atualizar lista** no front.
+O banco começa com três turmas de exemplo. O front lista o GET em uma tabela.
 
 ## Configuração do ambiente
-
-O Compose usa `.env.example`. Um `.env` na raiz pode substituir esses valores. A API recebe as variáveis de conexão com o banco.
+O Compose usa `.env.example`. Um `.env` na raiz pode substituir esses valores.
 
 Para personalizar:
-
 ```bash
 cp .env.example .env
 ```
@@ -67,7 +61,7 @@ Valores de exemplo:
 ```text
 POSTGRES_DB=turmas
 POSTGRES_USER=aluno
-POSTGRES_PASSWORD=senha_local
+POSTGRES_PASSWORD=admin
 DB_HOST=banco
 DB_PORT=5432
 PORT=3000
@@ -79,7 +73,6 @@ DB_EXTERNAL_PORT=5433
 A senha é de exemplo para uso local. `.gitignore` e `.dockerignore` excluem `.env`, dependências e builds.
 
 ## Redes e persistência
-
 - `rede_banco`: conecta PostgreSQL e API.
 - `rede_front`: conecta API e front.
 
@@ -89,9 +82,7 @@ O volume `postgres_data`, montado em `/var/lib/postgresql/data`, mantém os dado
 
 
 ## Exemplos
-
 ### Cadastrar
-
 No Swagger, use **Try it out** em `POST /classes` e envie:
 ```json
 {
@@ -114,7 +105,6 @@ Exemplo de resposta;
 ```
 
 ### Listar e buscar
-
 ```bash
 curl http://localhost:3006/classes
 curl http://localhost:3006/classes/4
@@ -134,7 +124,6 @@ Troque `4` pelo ID cadastrado. A busca retorna um objeto como o cadastro; a list
 ```
 
 ### Atualizar e excluir
-
 No Swagger, informe o ID da turma:
 - PUT: envie os quatro campos.
 - PATCH: envie, por exemplo, `{"capacity":40}`.
@@ -142,7 +131,6 @@ No Swagger, informe o ID da turma:
 
 
 ## Como encerrar
-
 Remover containers e redes, mantendo os dados:
 ```bash
 docker compose down
